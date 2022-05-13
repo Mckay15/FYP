@@ -5,12 +5,16 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public bool attackable = false;
-    public UnitController control;
+    private UnitController control;
 
     public int xCoord;
     public int yCoord;
 
     public List<TileMap.Node> currentPath = null;
+    private void Start()
+    {
+        control = UnitController.Instance;
+    }
 
     void OnMouseDown()
     {

@@ -10,6 +10,7 @@ using System.Linq;
 
 public class TileMap : MonoBehaviour
 {
+    private UnitController control;
     public GameObject selected;
     Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
     public GameObject[,] grid;
@@ -48,6 +49,7 @@ public class TileMap : MonoBehaviour
 
     void Start()
     {
+        control = UnitController.Instance;
         tiles = new int[gridSize, gridSize];
         grid = new GameObject[gridSize, gridSize];
         for (int x = 0; x < gridSize; x++)
@@ -205,7 +207,10 @@ public class TileMap : MonoBehaviour
 
     public void generatePathTo(GameObject _current)
     {
-        selected = _current;
+
+        print("WHY HERE");
+
+        selected = control._currentUnit.gameObject;
         selected.GetComponent<Unit>().currentPath = null;
 
         Dictionary<Node, float> dist = new Dictionary<Node, float>();

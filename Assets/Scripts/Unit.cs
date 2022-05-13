@@ -14,11 +14,20 @@ public class Unit : MonoBehaviour
     public int startXCoord;
     public int startYCoord;
 
-    public UnitController control;
+    private UnitController control;
 
     public List<TileMap.Node> currentPath = null;
 
     public List<TileMap.Node> range = null;
+
+    private void Start()
+    {
+        control = UnitController.Instance;
+        if(control == null)
+        {
+            print("control is NULL");
+        }
+    }
 
     void Update()
     {
@@ -60,8 +69,13 @@ public class Unit : MonoBehaviour
             isActive = true;
             startXCoord = xCoord;
             startYCoord = yCoord;
-            control.activateCharacter(gameObject, xCoord, yCoord);
-            control.currentUnit = this;
+           // control._currentUnit = this;
+           if (control == null)
+            {
+                print("wait really :(");
+            }
+            control._currentUnit = this;
+            control.activateCharacter(this, xCoord, yCoord);
             print("Click");
         }
     }
