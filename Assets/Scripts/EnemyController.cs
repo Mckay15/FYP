@@ -4,17 +4,40 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public TileMap map;
+    public static EnemyController Instance;
+
+    private TileMap map;
+
+    public TileMap Map { get => map; set => map = value; }
 
     public GameObject[] enemies;
+
+    public List<Enemy> Enemies;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        map = new TileMap();
+        map = GameObject.FindGameObjectWithTag("Map").GetComponent<TileMap>();
+        Enemies = new List<Enemy>();
+    }
+
+    public void AddEnemy(Enemy e)
+    {
+        Enemies.Add(e);
+    }
 
     public void enemyTurn()
     {
         print("enemyTurn");
-        foreach(GameObject e in enemies)
+        foreach(Enemy e in Enemies)
         {
             print("enemy");
-            map.enemyPathMove(map.enemyMovement(e));
+            map.enemyPathMove(map.enemyMovement(e.gameObject));
         }
     }
 }
