@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -24,6 +23,11 @@ public class EnemyController : MonoBehaviour
         map = new TileMap();
         map = GameObject.FindGameObjectWithTag("Map").GetComponent<TileMap>();
         Enemies = new List<Enemy>();
+        GameObject.FindGameObjectsWithTag("Enemy").CopyTo(enemies,0);
+        if (enemies.Length == 0)
+        {
+            print("enemies length 0");
+        }
     }
 
     public void AddEnemy(Enemy e)

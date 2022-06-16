@@ -26,9 +26,12 @@ public class TileMap : MonoBehaviour
 
     public class Node
     {
+        public string NodeName;
         public List<Node> neighbours;
         public int xCoord;
         public int yCoord;
+
+        public Clickable ClickClack;
 
         public bool passible = true;
         public bool player = false;
@@ -77,6 +80,7 @@ public class TileMap : MonoBehaviour
 
                 graph[x, y].xCoord = x;
                 graph[x, y].yCoord = y;
+                graph[x, y].NodeName = "Node " + x + " " + y;
             }
         }
 
@@ -103,11 +107,13 @@ public class TileMap : MonoBehaviour
             for (int y = 0; y < gridSize; y++)
             {
                 TileInfo temp = tileType[tiles[x, y]];
-
+                temp.name = "Tile " + x + "," + y;
                 GameObject tile = (GameObject)Instantiate(temp.prefab, new Vector3(x, 0, y), Quaternion.identity);
+                tile.name = "Tile " + x + "," + y;
 
                 Clickable click = tile.GetComponent<Clickable>();
 
+                
                 click.xCoord = x;
                 click.yCoord = y;
                 click.map = this;
@@ -208,9 +214,14 @@ public class TileMap : MonoBehaviour
     public void generatePathTo(GameObject _current)
     {
 
-        print("WHY HERE");
+        //print("generate Path");
+        //foreach (Node v in graph)
+        //{
+        //    print("v.x" + v.xCoord + " v.y" + v.yCoord + " "
+        //        + v.NodeName);
+        //}
 
-        selected = control._currentUnit.gameObject;
+        selected = _current.gameObject;
         selected.GetComponent<Unit>().currentPath = null;
 
         Dictionary<Node, float> dist = new Dictionary<Node, float>();
@@ -223,7 +234,7 @@ public class TileMap : MonoBehaviour
 
         Node source = graph[selected.GetComponent<Unit>().xCoord, 
             selected.GetComponent<Unit>().yCoord];
-
+        
        // Node target = graph[_x, _y];
 
         dist[source] = 0;
@@ -238,7 +249,9 @@ public class TileMap : MonoBehaviour
                 if( grid[v.xCoord, v.yCoord].GetComponent<Clickable>().enemy == true ||
                     grid[v.xCoord, v.yCoord].GetComponent<Clickable>().friend == true  )
                 {
+                    //print("YOU SHALL NOT PASS");
                     v.passible = false;
+                    grid[v.xCoord, v.yCoord].GetComponent<TileInfo>().impassible = true;
                 }
             }
             unvistied.Add(v);
@@ -253,7 +266,7 @@ public class TileMap : MonoBehaviour
                 //bool friend = grid[possibleU.xCoord, possibleU.yCoord].GetComponent<Clickable>().friend;
                
                 if (u == null || dist[possibleU] < dist[u] && possibleU.passible == true)
-               {
+                {
                     u = possibleU;
                     // grid[possibleU.xCoord, possibleU.yCoord].GetComponent<Clickable>().changeColour();
                 }
@@ -270,14 +283,18 @@ public class TileMap : MonoBehaviour
             {
                 if (u.passible == false)
                 {
-                    print("false");
+
+                    //print("false " + v);
                 }
                 float alt = dist[u] + u.DistanceTo(v);
+                //print(dist[u] + " " + dist[v]);
                 if(alt < dist[v] && alt < 4 && v.passible == true)
                 {
                     dist[v] = alt;
+                    v.ClickClack = grid[v.xCoord, v.yCoord].GetComponent<Clickable>();
                     prev[v] = u;
                     grid[v.xCoord, v.yCoord].GetComponent<Clickable>().changeColourActive();
+                    //print(v.xCoord + " " + v.yCoord);
                     allowed.Add(v);
                 }
             }
@@ -438,13 +455,19 @@ public class TileMap : MonoBehaviour
 
     public void isItInPath(int _x, int _y)
     {
-        print("map");
 
         Node target = graph[_x, _y];
+        print(_x + " " + _y);
+        //print("graph" + graph[_x, _y].xCoord + " " + graph[_x, _y].yCoord);           NOTE: THIS BREAKS THE PATHFINDING
+        //if (!prev.TryGetValue(target, out target))
+        //{
+        //    Debug.LogError("Prev doesnt have target");
+        //}
 
         if (prev[target] == null)
         {
             //no route
+            Debug.Log("no route");
             selected.transform.position = new Vector3(selected.GetComponent<Unit>().startXCoord, 0, selected.GetComponent<Unit>().startYCoord);
             selected.GetComponent<Unit>().xCoord = selected.GetComponent<Unit>().startXCoord;
             selected.GetComponent<Unit>().yCoord = selected.GetComponent<Unit>().startYCoord;
@@ -465,13 +488,13 @@ public class TileMap : MonoBehaviour
 
         selected.GetComponent<Unit>().currentPath = currentPath;
 
-        foreach (Node v in selected.GetComponent<Unit>().currentPath)
+        foreach (Node v in currentPath)
         {
-            print("NODE");
+            //print("NODE" + _x + " " + _y + " xCoord " + v.xCoord + " yCoord " + v.yCoord);
             if (v.xCoord == _x && v.yCoord == _y)
             {
                 print("ACCEPTABLE");
-                selected.transform.position = new Vector3(v.xCoord, 0, v.yCoord);
+                selected.transform.position = new Vector3(v.xCoord, 0, v.yCoord); //code not running through here.
                 return;
             }
             else
@@ -480,7 +503,6 @@ public class TileMap : MonoBehaviour
                 print("UNACCEPTABLE");
             }
         }
-
         selected.transform.position = new Vector3(selected.GetComponent<Unit>().startXCoord, 0, selected.GetComponent<Unit>().startYCoord);
     }
 

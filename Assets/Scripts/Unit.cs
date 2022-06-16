@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    private GameManager Core;
+
     public bool active = true;
     public Vector3 targetPos;
     public int acc = 95;
@@ -11,10 +13,11 @@ public class Unit : MonoBehaviour
     const int MOUSE = 0;
     public int xCoord;
     public int yCoord;
+    public float Testing_Float = 0;
     public int startXCoord;
     public int startYCoord;
 
-    private UnitController control;
+    public UnitController control;
 
     public List<TileMap.Node> currentPath = null;
 
@@ -22,6 +25,7 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
+        Core = GameManager.Core;
         control = UnitController.Instance;
         if(control == null)
         {
@@ -64,32 +68,32 @@ public class Unit : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (control.activeCharacter == false && active == true)
+        if (Core.get_State() == "Players_Turn")
         {
-            isActive = true;
-            startXCoord = xCoord;
-            startYCoord = yCoord;
-           // control._currentUnit = this;
-           if (control == null)
+            if (control.activeCharacter == false && active == true)
             {
-                print("wait really :(");
+                isActive = true;
+                startXCoord = xCoord;
+                startYCoord = yCoord;
+                // control._currentUnit = this;
+                if (control == null)
+                {
+                    print("wait really :(");
+                }
+                control._currentUnit = this;
+                control.activateCharacter(this, xCoord, yCoord);
+                print("Click");
             }
-            control._currentUnit = this;
-            control.activateCharacter(this, xCoord, yCoord);
-            print("Click");
         }
     }
 
     private void OnMouseUp()
     {
-        //if (control.foundEnemy == false)
-        //{
-
-        //}
         if (control.activeCharacter == false && active == true)
         {
             isActive = false;
             print("up");
+            print(xCoord + " " + yCoord);
             control.placeCharacter(xCoord, yCoord);
             control.colourReturn();
             control.attackRange();
@@ -98,7 +102,11 @@ public class Unit : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other)
-    {
+    { 
+        if (other.GetComponent<Clickable>() == null)
+        {
+            Debug.Log("Clickable null?");
+        }
         xCoord = other.GetComponent<Clickable>().xCoord;
         yCoord = other.GetComponent<Clickable>().yCoord;
     }

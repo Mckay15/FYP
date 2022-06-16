@@ -30,7 +30,19 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        xCoord = other.GetComponent<Clickable>().xCoord;
-        yCoord = other.GetComponent<Clickable>().yCoord;
+        //Clickable tempCollider = other.GetComponent<Clickable>();
+        if (other.GetComponent<TileInfo>() != null)
+        {
+            if (other.GetComponent<TileInfo>().impassible == false)
+            {
+                print("Can Pass");
+                xCoord = other.GetComponent<Clickable>().xCoord;
+                yCoord = other.GetComponent<Clickable>().yCoord;
+            }
+        }
+        else
+        {
+            print("Cant Pass");
+        }
     }
 }

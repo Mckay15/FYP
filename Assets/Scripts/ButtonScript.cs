@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class ButtonScript : MonoBehaviour
 {
+    private GameManager Core;
     private UnitController control;
 
     public EnemyController eControl;
     private void Start()
     {
+        Core = GameManager.Core;
         control = UnitController.Instance;
     }
     public void stop()
@@ -25,6 +27,6 @@ public class ButtonScript : MonoBehaviour
     }
     public void endTurn()
     {
-        eControl.enemyTurn();
+        Core.End_Player_Turn();
     }
 }

@@ -6,6 +6,8 @@ public class UnitController : MonoBehaviour
 {
     public static UnitController Instance;
 
+    public GameManager Core;
+
     private TileMap map;
 
     private Unit currentUnit;
@@ -15,6 +17,8 @@ public class UnitController : MonoBehaviour
         get { return currentUnit; }
         set { currentUnit = value; }
     }
+
+    private GameObject BattleObject;
 
     public TileMap Map { get => map; set => map = value; }
 
@@ -35,15 +39,24 @@ public class UnitController : MonoBehaviour
     {
         map = new TileMap();
         map = GameObject.FindGameObjectWithTag("Map").GetComponent<TileMap>();
-        GameObject tempCanvas = GameObject.FindGameObjectWithTag("bScene");
-        if (tempCanvas != null)
+
+        Core = GameManager.Core;
+
+        BattleObject = GameObject.FindGameObjectWithTag("bScene");
+        //BattleObject.SetActive(false);
+
+        if (BattleObject != null)
         {
-            print("found bScene");
-            battleScene = tempCanvas.GetComponent<Canvas>();
+            print("found bObject");
+            battleScene = BattleObject.GetComponent<Canvas>();
             if (battleScene == null)
             {
                 print("battleScene ref failed!");
             }
+        }
+        else
+        {
+            print("bObject not found");
         }
     }
 
@@ -51,8 +64,8 @@ public class UnitController : MonoBehaviour
     {
         if (map != null)
         {
-            _current = _currentUnit;
-            map.generatePathTo(_current.gameObject);
+            //_current = _currentUnit;
+            map.generatePathTo(_currentUnit.gameObject);
         }
         else
         {
@@ -90,15 +103,15 @@ public class UnitController : MonoBehaviour
 
     public void battle(Enemy _enemy) //battle
     {
-        attack_Menu();
-        if (Random.Range(0, 100) < currentUnit.acc)
-        {
-            print("hit");
-        }
-        else
-        {
-            print("miss");
-        }
+        
+        //if (Random.Range(0, 100) < currentUnit.acc)
+        //{
+        //    print("hit");
+        //}
+        //else
+        //{
+        //    print("miss");
+        //}
         map.colourReturn();
         activeCharacter = false;
         currentUnit.active = false;

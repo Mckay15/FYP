@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Clickable : MonoBehaviour
 {
+    private UnitController U_Control;
+
     public int xCoord;
     public int yCoord;
 
@@ -14,6 +16,11 @@ public class Clickable : MonoBehaviour
     public TileMap map;
     public Color col;
     public Material mat;
+
+    private void Awake()
+    {
+        U_Control = UnitController.Instance;
+    }
 
     void Start()
     {
@@ -33,15 +40,18 @@ public class Clickable : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Enemy"))
-        {
-            enemy = true;
-            enemyObj = other.gameObject;
-        }
-        if(other.CompareTag("Friend"))
-        {
-            friend = true;
-        }
+        //if (U_Control.activeCharacter == true)
+        //{
+            if (other.CompareTag("Enemy"))
+            {
+                enemy = true;
+                enemyObj = other.gameObject;
+            }
+            if (other.CompareTag("Friend"))
+            {
+                friend = true;
+            }
+        //}
     }
     private void OnTriggerExit(Collider other)
     {
